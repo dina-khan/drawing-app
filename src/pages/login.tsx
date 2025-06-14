@@ -7,9 +7,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -22,8 +23,12 @@ export default function LoginPage() {
 
       alert('Login successful!');
       router.push('/gallery');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Unexpected error occurred.');
+      }
     }
   };
 
@@ -36,7 +41,7 @@ export default function LoginPage() {
           placeholder="Email"
           className="w-full border p-2 rounded"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
@@ -44,7 +49,7 @@ export default function LoginPage() {
           placeholder="Password"
           className="w-full border p-2 rounded"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button type="submit" className="w-full bg-green-600 text-white py-2 rounded">
@@ -54,8 +59,9 @@ export default function LoginPage() {
       </form>
 
       <div className="mt-4 text-center">
-        <p className="text-sm">Don't have an account?</p>
+        <p>Don&apos;t have an account?</p>
         <button
+          type="button"
           onClick={() => router.push('/signup')}
           className="mt-2 text-blue-600 hover:underline"
         >
