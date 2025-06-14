@@ -9,17 +9,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const { userId } = getUserFromRequest(req) as { userId: string };
-
     const { id, name, dataUrl } = req.body;
+
     if (!name || !dataUrl) {
       return res.status(400).json({ error: 'Missing name or image data' });
     }
 
-    // Update if drawing ID is provided
     if (id) {
       const existing = await prisma.drawing.findUnique({ where: { id } });
 
-      if (!existing || existing.userId !== userId) {
+      if (!existing) {
+        return res.status(404).json({ error: 'Drawing not found' });
+      }
+
+      if (existing.userId !== userId) {
         return res.status(403).json({ error: 'Forbidden' });
       }
 
@@ -31,13 +34,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json(updated);
     }
 
-    // Create new drawing
-    const drawing = await prisma.drawing.create({
+    const newDrawing = await prisma.drawing.create({
       data: { userId, name, dataUrl },
     });
 
-    return res.status(201).json(drawing);
-  } catch (error) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(201).json(newDrawing);
+  } catch {
+    return res.status(401).json({ error: 'Unauthorized or session expired' });
   }
 }
