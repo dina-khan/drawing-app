@@ -1,8 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { json } from 'micro';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
 import { serialize } from 'cookie';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -20,8 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { email, password } = req.body;
-    console.log('[LOGIN] Body:', req.body);
+    const body = await json(req) as { email: string; password: string };
+    const { email, password } = body;
+    console.log('[LOGIN] Body:', body);
 
     if (!email || !password) {
       console.warn('[LOGIN] Missing email or password');
@@ -42,7 +50,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET as string, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET as string, {
+      expiresIn: '7d',
+    });
 
     const cookie = serialize('token', token, {
       httpOnly: true,
