@@ -1,32 +1,48 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { serialize } from 'cookie';
 
-const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') return res.status(405).end();
+  console.log('[LOGIN] Method:', req.method); 
+  console.log('[LOGIN] Headers:', req.headers); 
 
-  const { email, password } = req.body;
-  const user = await prisma.user.findUnique({ where: { email } });
-
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
-  const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+  try {
+    const { email, password } = req.body;
 
-  const cookie = serialize('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Missing email or password' });
+    }
 
-  res.setHeader('Set-Cookie', cookie);
-  return res.status(200).json({ message: 'Login successful' });
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+
+    const cookie = serialize('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, 
+    });
+
+    res.setHeader('Set-Cookie', cookie);
+    return res.status(200).json({ message: 'Login successful' });
+
+  } catch (error: any) {
+    console.error('[LOGIN] Error:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 }
