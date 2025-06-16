@@ -102,9 +102,9 @@ const DrawingPage = () => {
 
   return (
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
-      {/* Top Toolbar */}
+      
       <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 shadow md:gap-6">
-        {/* Color Palette */}
+        
         <div className="flex items-center p-2 rounded-xl shadow-inner bg-[#fce8d5] gap-2">
           {['#000000', '#ff0000', '#0000ff', '#00ff00', '#ffff00', '#800080'].map((color) => (
             <button
@@ -114,7 +114,9 @@ const DrawingPage = () => {
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
               }}
-              className={`w-6 h-6 rounded-full border-2 border-dashed ${strokeColor === color ? 'border-black' : 'border-gray-400'}`}
+              className={`w-6 h-6 rounded-full border ridge-border ${
+                strokeColor === color ? 'ring-2 ring-black' : ''
+              }`}
               style={{ backgroundColor: color }}
               title={color}
             />
@@ -134,7 +136,6 @@ const DrawingPage = () => {
           </label>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex gap-3 items-center">
           <button title="Toggle Dark Mode" onClick={() => setDarkMode((prev) => !prev)}>
             {darkMode ? <SunIcon className="h-6 w-6 text-yellow-400" /> : <MoonIcon className="h-6 w-6 text-gray-700" />}
@@ -168,7 +169,6 @@ const DrawingPage = () => {
         </div>
       </div>
 
-      {/* Sidebar Tools */}
       <div className="fixed top-28 left-4 flex flex-col gap-4 z-20">
         <button onClick={() => { setTool('pen'); canvasRef.current?.eraseMode(false); }} title="Pen"
           className={`p-2 rounded ${tool === 'pen' ? 'bg-blue-600' : 'bg-gray-500'} text-white`}>
@@ -187,7 +187,6 @@ const DrawingPage = () => {
         </button>
       </div>
 
-      {/* Canvas */}
       <div className="pt-24 px-4 pb-32 flex justify-center">
         <div className="w-full max-w-4xl">
           {loading ? (
@@ -205,6 +204,12 @@ const DrawingPage = () => {
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        .ridge-border {
+          border: 2px ridge #fce8d5;
+        }
+      `}</style>
     </div>
   );
 };
