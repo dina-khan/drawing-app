@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUserFromRequest } from '@/lib/auth';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest) {
   try {
     const { userId } = getUserFromRequest(req);
 
-    const id = params.id;
+    const url = new URL(req.url);
+    const id = url.pathname.split('/').pop(); // Extract ID from URL
+
     if (!id || typeof id !== 'string') {
       return NextResponse.json({ error: 'Invalid drawing ID' }, { status: 400 });
     }
