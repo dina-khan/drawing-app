@@ -1,13 +1,12 @@
+import { cookies } from 'next/headers';
 import { verify } from 'jsonwebtoken';
-import { NextApiRequest } from 'next';
-import { parse } from 'cookie';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 type JwtPayload = { userId: string };
 
-export function getUserFromRequest(req: NextApiRequest): JwtPayload {
-  const cookies = parse(req.headers.cookie || '');
-  const token = cookies.token;
+export async function getUserFromRequest(): Promise<JwtPayload> {
+  const cookieStore = await cookies(); // await is required
+  const token = cookieStore.get('token')?.value;
 
   if (!token) throw new Error('Unauthorized');
 
