@@ -15,7 +15,7 @@ import {
   MoonIcon,
   SunIcon,
   AdjustmentsHorizontalIcon,
-  XMarkIcon, 
+  BackspaceIcon,
 } from '@heroicons/react/24/solid';
 
 const colorToRgba = (hex: string, alpha: number) => {
@@ -64,10 +64,7 @@ const DrawingPage = () => {
   }, [drawingId, router]);
 
   const handleUndo = () => canvasRef.current?.undo();
-
-  const handleClear = () => {
-    canvasRef.current?.clearCanvas();
-  };
+  const handleClear = () => canvasRef.current?.clearCanvas();
 
   const handleDownload = async (format: 'png' | 'jpeg') => {
     const dataUrl = await canvasRef.current?.exportImage(format);
@@ -107,7 +104,8 @@ const DrawingPage = () => {
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
       {/* Top Toolbar */}
       <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 shadow md:gap-6">
-        <div className="flex gap-2">
+        {/* Color Palette */}
+        <div className="flex items-center p-2 rounded-xl shadow-inner bg-[#fce8d5] gap-2">
           {['#000000', '#ff0000', '#0000ff', '#00ff00', '#ffff00', '#800080'].map((color) => (
             <button
               key={color}
@@ -116,7 +114,7 @@ const DrawingPage = () => {
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
               }}
-              className={`w-6 h-6 rounded-full border-2 ${strokeColor === color ? 'border-black' : 'border-transparent'}`}
+              className={`w-6 h-6 rounded-full border-2 border-dashed ${strokeColor === color ? 'border-black' : 'border-gray-400'}`}
               style={{ backgroundColor: color }}
               title={color}
             />
@@ -136,6 +134,7 @@ const DrawingPage = () => {
           </label>
         </div>
 
+        {/* Action Buttons */}
         <div className="flex gap-3 items-center">
           <button title="Toggle Dark Mode" onClick={() => setDarkMode((prev) => !prev)}>
             {darkMode ? <SunIcon className="h-6 w-6 text-yellow-400" /> : <MoonIcon className="h-6 w-6 text-gray-700" />}
@@ -150,7 +149,6 @@ const DrawingPage = () => {
             <ArrowUturnRightIcon className="h-6 w-6 text-yellow-600" />
           </button>
 
-          {/* Upload & Download - Desktop only */}
           <div className="hidden md:flex gap-3">
             <button onClick={handleExport} title="Save to Gallery">
               <CloudArrowUpIcon className="h-6 w-6 text-green-600" />
@@ -170,6 +168,7 @@ const DrawingPage = () => {
         </div>
       </div>
 
+      {/* Sidebar Tools */}
       <div className="fixed top-28 left-4 flex flex-col gap-4 z-20">
         <button onClick={() => { setTool('pen'); canvasRef.current?.eraseMode(false); }} title="Pen"
           className={`p-2 rounded ${tool === 'pen' ? 'bg-blue-600' : 'bg-gray-500'} text-white`}>
@@ -181,14 +180,14 @@ const DrawingPage = () => {
         </button>
         <button onClick={() => { setTool('eraser'); canvasRef.current?.eraseMode(true); }} title="Eraser"
           className={`p-2 rounded ${tool === 'eraser' ? 'bg-red-500' : 'bg-gray-500'} text-white`}>
-          <XMarkIcon className="h-6 w-6" />
+          <BackspaceIcon className="h-6 w-6" />
         </button>
-        <button onClick={handleClear} title="Clear Canvas"
-          className="p-2 rounded bg-gray-700 text-white">
+        <button onClick={handleClear} title="Clear Canvas" className="p-2 rounded bg-gray-700 text-white">
           <TrashIcon className="h-6 w-6" />
         </button>
       </div>
 
+      {/* Canvas */}
       <div className="pt-24 px-4 pb-32 flex justify-center">
         <div className="w-full max-w-4xl">
           {loading ? (
