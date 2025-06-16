@@ -107,7 +107,7 @@ const DrawingPage = () => {
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
       <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 md:gap-6 border-b border-gray-300 dark:border-gray-700">
         
-        <div className="flex items-center p-3 gap-2 rounded-full bg-[#fce8d5] shadow-none border-2 border-[#e2cbb3]">
+        <div className="flex items-center p-3 gap-2 rounded-full bg-[#fce8d5] border-2 border-[#e2cbb3]">
           {colorSwatches.map((color) => (
             <button
               key={color}
@@ -117,31 +117,35 @@ const DrawingPage = () => {
                 if (tool === 'eraser') setTool('pen');
               }}
               className={`w-6 h-6 rounded-full border-2 transition ${
-                strokeColor === color ? 'border-black' : 'border-[#e2cbb3]'
+                strokeColor === color ? 'border-black' : 'ridge-border'
               }`}
               style={{ backgroundColor: color }}
               title={color}
             />
           ))}
 
-          {/* Custom Color Swatch */}
-          <label title="Custom Color" className="relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 transition"
-            style={{
-              backgroundColor: customColor || '#fce8d5',
-              borderColor: strokeColor === customColor ? 'black' : '#e2cbb3'
-            }}>
+          <label
+            title="Custom Color"
+            className={`relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 transition ${
+              strokeColor === customColor ? 'border-black' : 'ridge-border'
+            }`}
+          >
             <input
               type="color"
               value={customColor || '#000000'}
               onChange={(e) => {
-                setCustomColor(e.target.value);
-                setStrokeColor(e.target.value);
+                const selected = e.target.value;
+                setCustomColor(selected);
+                setStrokeColor(selected);
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
               }}
               className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
             />
-            <AdjustmentsHorizontalIcon className="absolute inset-0 m-auto h-4 w-4 text-gray-700 dark:text-white pointer-events-none" />
+            <div
+              className="w-full h-full rounded-full"
+              style={{ backgroundColor: customColor || '#fce8d5' }}
+            />
           </label>
         </div>
 
@@ -178,7 +182,6 @@ const DrawingPage = () => {
         </div>
       </div>
 
-      {/* Tool Sidebar */}
       <div className="fixed top-28 left-4 flex flex-col gap-4 z-20">
         <button onClick={() => { setTool('pen'); canvasRef.current?.eraseMode(false); }} title="Pen"
           className={`p-2 rounded ${tool === 'pen' ? 'bg-blue-600' : 'bg-gray-500'} text-white`}>
@@ -197,7 +200,6 @@ const DrawingPage = () => {
         </button>
       </div>
 
-      {/* Canvas */}
       <div className="pt-24 px-4 pb-32 flex justify-center">
         <div className="w-full max-w-4xl">
           {loading ? (
@@ -215,6 +217,13 @@ const DrawingPage = () => {
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        .ridge-border {
+          border-style: ridge;
+          border-color: #fce8d5;
+        }
+      `}</style>
     </div>
   );
 };
