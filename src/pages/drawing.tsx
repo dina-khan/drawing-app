@@ -115,8 +115,8 @@ const DrawingPage = () => {
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
               }}
-              className={`w-6 h-6 rounded-full border-2 ridge-border no-shadow transition ${
-                strokeColor === color ? 'border-black' : ''
+              className={`w-6 h-6 rounded-full transition border-2 ${
+                strokeColor === color ? 'border-black' : 'ridge-border'
               }`}
               style={{ backgroundColor: color }}
               title={color}
@@ -125,8 +125,8 @@ const DrawingPage = () => {
 
           <label
             title="Custom Color"
-            className={`relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 ridge-border no-shadow transition ${
-              strokeColor === customColor && customColor !== '' ? 'border-black' : ''
+            className={`relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 transition ${
+              strokeColor === customColor && customColor !== '' ? 'border-black' : 'ridge-border'
             }`}
           >
             <input
@@ -227,9 +227,6 @@ const DrawingPage = () => {
         .ridge-border {
           border-style: ridge;
           border-color: #fce8d5;
-        }
-        .no-shadow {
-          box-shadow: none !important;
         }
       `}</style>
     </div>
