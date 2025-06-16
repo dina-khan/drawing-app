@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+// Ensure JWT_SECRET is defined and typed correctly
 const JWT_SECRET = process.env.JWT_SECRET;
-
 if (!JWT_SECRET || typeof JWT_SECRET !== 'string') {
   throw new Error('[LOGIN] JWT_SECRET is not defined in environment variables');
 }
@@ -28,12 +28,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    // ✅ TypeScript-safe use of jwt.sign
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET as string, {
+      expiresIn: '7d',
+    });
 
     const response = NextResponse.json({ message: 'Login successful' });
-    response.cookies.set({
-      name: 'token',
-      value: token,
+
+    // ✅ Set token in cookie
+    response.cookies.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
