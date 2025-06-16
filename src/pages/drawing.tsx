@@ -106,8 +106,8 @@ const DrawingPage = () => {
   return (
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
       <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 md:gap-6 border-b border-gray-300 dark:border-gray-700">
-        {/* Painter Palette */}
-        <div className="flex items-center p-3 gap-2 rounded-full bg-[#fce8d5] border-2 border-[#e2cbb3]">
+        
+        <div className="flex items-center p-3 gap-2 rounded-full bg-[#fce8d5] shadow-none border-2 border-[#e2cbb3]">
           {colorSwatches.map((color) => (
             <button
               key={color}
