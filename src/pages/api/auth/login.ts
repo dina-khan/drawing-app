@@ -1,18 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { json } from 'micro';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
 import { serialize } from 'cookie';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 const JWT_SECRET = process.env.JWT_SECRET;
-
 if (!JWT_SECRET) {
   throw new Error('[LOGIN] JWT_SECRET is not defined in environment variables');
 }
@@ -23,13 +15,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
   try {
-    const body = await json(req) as { email: string; password: string };
-    const { email, password } = body;
-    console.log('[LOGIN] Body:', body);
+    const { email, password } = req.body;
+    console.log('[LOGIN] Body:', req.body);
 
     if (!email || !password) {
       console.warn('[LOGIN] Missing email or password');
