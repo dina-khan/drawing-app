@@ -106,48 +106,54 @@ const DrawingPage = () => {
   return (
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
       <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 md:gap-6 border-b border-gray-300 dark:border-gray-700">
-        
         <div className="flex items-center p-3 gap-2 rounded-full bg-[#fce8d5] border-2 border-[#e2cbb3]">
-          {colorSwatches.map((color) => (
-            <button
-              key={color}
-              onClick={() => {
-                setStrokeColor(color);
-                canvasRef.current?.eraseMode(false);
-                if (tool === 'eraser') setTool('pen');
-              }}
-              className={`w-6 h-6 rounded-full border-2 transition ${
-                strokeColor === color ? 'border-black' : 'ridge-border'
-              }`}
-              style={{ backgroundColor: color }}
-              title={color}
-            />
-          ))}
+  {colorSwatches.map((color) => (
+    <button
+      key={color}
+      onClick={() => {
+        setStrokeColor(color);
+        canvasRef.current?.eraseMode(false);
+        if (tool === 'eraser') setTool('pen');
+      }}
+      className={`w-6 h-6 rounded-full border-2 ridge-border transition ${
+        strokeColor === color ? 'border-black' : ''
+      }`}
+      style={{ backgroundColor: color }}
+      title={color}
+    />
+  ))}
 
-          <label
-            title="Custom Color"
-            className={`relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 transition ${
-              strokeColor === customColor ? 'border-black' : 'ridge-border'
-            }`}
-          >
-            <input
-              type="color"
-              value={customColor || '#000000'}
-              onChange={(e) => {
-                const selected = e.target.value;
-                setCustomColor(selected);
-                setStrokeColor(selected);
-                canvasRef.current?.eraseMode(false);
-                if (tool === 'eraser') setTool('pen');
-              }}
-              className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
-            />
-            <div
-              className="w-full h-full rounded-full"
-              style={{ backgroundColor: customColor || '#fce8d5' }}
-            />
-          </label>
-        </div>
+  <label
+    title="Custom Color"
+    className={`relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 ridge-border transition ${
+      strokeColor === customColor && customColor !== '' ? 'border-black' : ''
+    }`}
+  >
+    <input
+      type="color"
+      value={customColor || '#000000'}
+      onChange={(e) => {
+        const selected = e.target.value;
+        setCustomColor(selected);
+        setStrokeColor(selected);
+        canvasRef.current?.eraseMode(false);
+        if (tool === 'eraser') setTool('pen');
+      }}
+      className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
+    />
+    {customColor ? (
+      <div
+        className="w-full h-full rounded-full"
+        style={{ backgroundColor: customColor }}
+      />
+    ) : (
+      <div className="w-full h-full rounded-full bg-[#fce8d5] flex items-center justify-center text-xs text-gray-700 dark:text-white">
+        —
+      </div>
+    )}
+  </label>
+</div>
+
 
         <div className="flex gap-3 items-center">
           <button title="Toggle Dark Mode" onClick={() => setDarkMode((prev) => !prev)}>
@@ -219,11 +225,12 @@ const DrawingPage = () => {
       </div>
 
       <style jsx>{`
-        .ridge-border {
-          border-style: ridge;
-          border-color: #fce8d5;
-        }
-      `}</style>
+  .ridge-border {
+    border-style: ridge;
+    border-color: #fce8d5;
+  }
+`}</style>
+
     </div>
   );
 };
