@@ -1,13 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { prisma } from '@/lib/prisma';
 import { serialize } from 'cookie';
+import { prisma } from '@/lib/prisma';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET ?? '';
 if (!JWT_SECRET) {
   throw new Error('[LOGIN] JWT_SECRET is not defined in environment variables');
 }
+
+export const config = {
+  api: {
+    bodyParser: true,
+  },
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log('[LOGIN] Method:', req.method);
@@ -19,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body as { email?: string; password?: string };
     console.log('[LOGIN] Body:', req.body);
 
     if (!email || !password) {
@@ -41,9 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET as string, {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
     const cookie = serialize('token', token, {
       httpOnly: true,
