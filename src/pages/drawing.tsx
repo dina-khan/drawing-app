@@ -209,7 +209,7 @@ const DrawingPage = () => {
       </div>
 
       {/* Mobile FABs */}
-      <div className="fixed bottom-4 right-4 flex gap-3 md:hidden z-40">
+      <div className="fixed bottom-4 right-4 flex flex-col items-end gap-3 md:hidden z-40">
         <button onClick={handleExport} title="Save"
           className="bg-green-600 text-white p-3 rounded-full shadow-lg">
           <CloudArrowUpIcon className="h-6 w-6" />
@@ -217,6 +217,10 @@ const DrawingPage = () => {
         <button onClick={() => setDownloadOpen((prev) => !prev)} title="Download"
           className="bg-blue-600 text-white p-3 rounded-full shadow-lg">
           <CloudArrowDownIcon className="h-6 w-6" />
+        </button>
+        <button onClick={handleClear} title="Clear"
+          className="bg-red-600 text-white p-3 rounded-full shadow-lg">
+          <TrashIcon className="h-6 w-6" />
         </button>
       </div>
     </div>
