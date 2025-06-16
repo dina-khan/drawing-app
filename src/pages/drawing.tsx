@@ -43,7 +43,7 @@ const DrawingPage = () => {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const drawingId = searchParams.get('id');
+  const drawingId = searchParams?.get('id') ?? '';
 
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [drawingName, setDrawingName] = useState('');
