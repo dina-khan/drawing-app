@@ -15,6 +15,7 @@ import {
   MoonIcon,
   SunIcon,
   AdjustmentsHorizontalIcon,
+  XMarkIcon, 
 } from '@heroicons/react/24/solid';
 
 const colorToRgba = (hex: string, alpha: number) => {
@@ -63,6 +64,10 @@ const DrawingPage = () => {
   }, [drawingId, router]);
 
   const handleUndo = () => canvasRef.current?.undo();
+
+  const handleClear = () => {
+    canvasRef.current?.clearCanvas();
+  };
 
   const handleDownload = async (format: 'png' | 'jpeg') => {
     const dataUrl = await canvasRef.current?.exportImage(format);
@@ -165,7 +170,6 @@ const DrawingPage = () => {
         </div>
       </div>
 
-      {/* Sidebar Tools */}
       <div className="fixed top-28 left-4 flex flex-col gap-4 z-20">
         <button onClick={() => { setTool('pen'); canvasRef.current?.eraseMode(false); }} title="Pen"
           className={`p-2 rounded ${tool === 'pen' ? 'bg-blue-600' : 'bg-gray-500'} text-white`}>
@@ -177,11 +181,14 @@ const DrawingPage = () => {
         </button>
         <button onClick={() => { setTool('eraser'); canvasRef.current?.eraseMode(true); }} title="Eraser"
           className={`p-2 rounded ${tool === 'eraser' ? 'bg-red-500' : 'bg-gray-500'} text-white`}>
+          <XMarkIcon className="h-6 w-6" />
+        </button>
+        <button onClick={handleClear} title="Clear Canvas"
+          className="p-2 rounded bg-gray-700 text-white">
           <TrashIcon className="h-6 w-6" />
         </button>
       </div>
 
-      {/* Canvas */}
       <div className="pt-24 px-4 pb-32 flex justify-center">
         <div className="w-full max-w-4xl">
           {loading ? (
