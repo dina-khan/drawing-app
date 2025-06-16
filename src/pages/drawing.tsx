@@ -42,6 +42,7 @@ const DrawingPage = () => {
   const [loading, setLoading] = useState(!!drawingId);
   const [tool, setTool] = useState<'pen' | 'highlighter' | 'eraser'>('pen');
   const [strokeColor, setStrokeColor] = useState('#000000');
+  const [customColor, setCustomColor] = useState('#000000');
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
@@ -102,9 +103,9 @@ const DrawingPage = () => {
 
   return (
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
-      
       <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 shadow md:gap-6">
-        
+
+        {/* Color Palette */}
         <div className="flex items-center p-2 rounded-xl shadow-inner bg-[#fce8d5] gap-2">
           {['#000000', '#ff0000', '#0000ff', '#00ff00', '#ffff00', '#800080'].map((color) => (
             <button
@@ -115,18 +116,33 @@ const DrawingPage = () => {
                 if (tool === 'eraser') setTool('pen');
               }}
               className={`w-6 h-6 rounded-full border ridge-border ${
-                strokeColor === color ? 'ring-2 ring-black' : ''
+                strokeColor === color ? 'border-black' : ''
               }`}
               style={{ backgroundColor: color }}
               title={color}
             />
           ))}
-          <label title="Custom Color" className="relative cursor-pointer">
+
+          <button
+            onClick={() => {
+              setStrokeColor(customColor);
+              canvasRef.current?.eraseMode(false);
+              if (tool === 'eraser') setTool('pen');
+            }}
+            className={`w-6 h-6 rounded-full border ridge-border ${
+              strokeColor === customColor ? 'border-black' : ''
+            }`}
+            style={{ backgroundColor: customColor || '#fce8d5' }}
+            title="Custom Color"
+          />
+
+          <label title="Pick Color" className="relative cursor-pointer">
             <AdjustmentsHorizontalIcon className="h-6 w-6 text-gray-700 dark:text-white" />
             <input
               type="color"
-              value={strokeColor}
+              value={customColor}
               onChange={(e) => {
+                setCustomColor(e.target.value);
                 setStrokeColor(e.target.value);
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
@@ -136,6 +152,7 @@ const DrawingPage = () => {
           </label>
         </div>
 
+        {/* Top Right Buttons */}
         <div className="flex gap-3 items-center">
           <button title="Toggle Dark Mode" onClick={() => setDarkMode((prev) => !prev)}>
             {darkMode ? <SunIcon className="h-6 w-6 text-yellow-400" /> : <MoonIcon className="h-6 w-6 text-gray-700" />}
@@ -208,6 +225,7 @@ const DrawingPage = () => {
       <style jsx>{`
         .ridge-border {
           border: 2px ridge #fce8d5;
+          box-shadow: none !important;
         }
       `}</style>
     </div>
