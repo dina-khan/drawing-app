@@ -41,8 +41,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Set-Cookie', cookie);
     return res.status(200).json({ message: 'Login successful' });
 
-  } catch (error: any) {
-    console.error('[LOGIN] Error:', error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('[LOGIN] Error:', error.message);
+    } else {
+      console.error('[LOGIN] Unknown error:', error);
+    }
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
