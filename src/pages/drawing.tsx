@@ -42,8 +42,10 @@ const DrawingPage = () => {
   const [loading, setLoading] = useState(!!drawingId);
   const [tool, setTool] = useState<'pen' | 'highlighter' | 'eraser'>('pen');
   const [strokeColor, setStrokeColor] = useState('#000000');
-  const [customColor, setCustomColor] = useState('#000000');
+  const [customColor, setCustomColor] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+
+  const colorSwatches = ['#000000', '#ff0000', '#0000ff', '#00ff00', '#ffff00', '#800080'];
 
   useEffect(() => {
     if (!drawingId) return;
@@ -103,11 +105,10 @@ const DrawingPage = () => {
 
   return (
     <div className={`relative min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
-      <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 shadow md:gap-6">
-
-        {/* Color Palette */}
-        <div className="flex items-center p-2 rounded-xl shadow-inner bg-[#fce8d5] gap-2">
-          {['#000000', '#ff0000', '#0000ff', '#00ff00', '#ffff00', '#800080'].map((color) => (
+      <div className="w-full flex flex-wrap justify-between items-center gap-4 px-4 py-2 fixed top-0 z-30 bg-white dark:bg-gray-800 md:gap-6 border-b border-gray-300 dark:border-gray-700">
+        {/* Painter Palette */}
+        <div className="flex items-center p-3 gap-2 rounded-full bg-[#fce8d5] border-2 border-[#e2cbb3]">
+          {colorSwatches.map((color) => (
             <button
               key={color}
               onClick={() => {
@@ -115,44 +116,35 @@ const DrawingPage = () => {
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
               }}
-              className={`w-6 h-6 rounded-full border ridge-border ${
-                strokeColor === color ? 'border-black' : ''
+              className={`w-6 h-6 rounded-full border-2 transition ${
+                strokeColor === color ? 'border-black' : 'border-[#e2cbb3]'
               }`}
               style={{ backgroundColor: color }}
               title={color}
             />
           ))}
 
-          <button
-            onClick={() => {
-              setStrokeColor(customColor);
-              canvasRef.current?.eraseMode(false);
-              if (tool === 'eraser') setTool('pen');
-            }}
-            className={`w-6 h-6 rounded-full border ridge-border ${
-              strokeColor === customColor ? 'border-black' : ''
-            }`}
-            style={{ backgroundColor: customColor || '#fce8d5' }}
-            title="Custom Color"
-          />
-
-          <label title="Pick Color" className="relative cursor-pointer">
-            <AdjustmentsHorizontalIcon className="h-6 w-6 text-gray-700 dark:text-white" />
+          {/* Custom Color Swatch */}
+          <label title="Custom Color" className="relative w-6 h-6 rounded-full overflow-hidden cursor-pointer border-2 transition"
+            style={{
+              backgroundColor: customColor || '#fce8d5',
+              borderColor: strokeColor === customColor ? 'black' : '#e2cbb3'
+            }}>
             <input
               type="color"
-              value={customColor}
+              value={customColor || '#000000'}
               onChange={(e) => {
                 setCustomColor(e.target.value);
                 setStrokeColor(e.target.value);
                 canvasRef.current?.eraseMode(false);
                 if (tool === 'eraser') setTool('pen');
               }}
-              className="absolute top-0 left-0 opacity-0 w-6 h-6"
+              className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
             />
+            <AdjustmentsHorizontalIcon className="absolute inset-0 m-auto h-4 w-4 text-gray-700 dark:text-white pointer-events-none" />
           </label>
         </div>
 
-        {/* Top Right Buttons */}
         <div className="flex gap-3 items-center">
           <button title="Toggle Dark Mode" onClick={() => setDarkMode((prev) => !prev)}>
             {darkMode ? <SunIcon className="h-6 w-6 text-yellow-400" /> : <MoonIcon className="h-6 w-6 text-gray-700" />}
@@ -186,6 +178,7 @@ const DrawingPage = () => {
         </div>
       </div>
 
+      {/* Tool Sidebar */}
       <div className="fixed top-28 left-4 flex flex-col gap-4 z-20">
         <button onClick={() => { setTool('pen'); canvasRef.current?.eraseMode(false); }} title="Pen"
           className={`p-2 rounded ${tool === 'pen' ? 'bg-blue-600' : 'bg-gray-500'} text-white`}>
@@ -204,6 +197,7 @@ const DrawingPage = () => {
         </button>
       </div>
 
+      {/* Canvas */}
       <div className="pt-24 px-4 pb-32 flex justify-center">
         <div className="w-full max-w-4xl">
           {loading ? (
@@ -221,13 +215,6 @@ const DrawingPage = () => {
           )}
         </div>
       </div>
-
-      <style jsx>{`
-        .ridge-border {
-          border: 2px ridge #fce8d5;
-          box-shadow: none !important;
-        }
-      `}</style>
     </div>
   );
 };
