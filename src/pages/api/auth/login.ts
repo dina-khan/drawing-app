@@ -4,10 +4,10 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
 import { serialize } from 'cookie';
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is not defined in environment variables');
+  throw new Error('[LOGIN] JWT_SECRET is not defined in environment variables');
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET as string, { expiresIn: '7d' });
 
     const cookie = serialize('token', token, {
       httpOnly: true,
