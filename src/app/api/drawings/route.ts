@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUserFromRequest } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const { userId } = await getUserFromRequest();
+    const { userId } = getUserFromRequest(req); // ✅ pass req to getUserFromRequest
 
     const drawings = await prisma.drawing.findMany({
       where: { userId },
@@ -13,8 +13,7 @@ export async function GET() {
 
     return NextResponse.json(drawings);
   } catch (err) {
-    console.error('Auth error:', err);
+    console.error('[DRAWINGS] Auth error:', err);
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 }
-
