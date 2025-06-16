@@ -149,9 +149,6 @@ const DrawingPage = () => {
           <button onClick={() => canvasRef.current?.redo()} title="Redo">
             <ArrowUturnRightIcon className="h-6 w-6 text-yellow-600" />
           </button>
-          <button onClick={handleClear} title="Clear">
-            <TrashIcon className="h-6 w-6 text-red-600" />
-          </button>
 
           {/* Upload & Download - Desktop only */}
           <div className="hidden md:flex gap-3">
@@ -217,10 +214,6 @@ const DrawingPage = () => {
         <button onClick={() => setDownloadOpen((prev) => !prev)} title="Download"
           className="bg-blue-600 text-white p-3 rounded-full shadow-lg">
           <CloudArrowDownIcon className="h-6 w-6" />
-        </button>
-        <button onClick={handleClear} title="Clear"
-          className="bg-red-600 text-white p-3 rounded-full shadow-lg">
-          <TrashIcon className="h-6 w-6" />
         </button>
       </div>
     </div>
