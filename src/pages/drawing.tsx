@@ -147,12 +147,13 @@ const DrawingPage = () => {
         style={{ backgroundColor: customColor }}
       />
     ) : (
-      <div className="w-full h-full rounded-full bg-[#fce8d5] flex items-center justify-center text-xs text-gray-700 dark:text-white">
-        —
+      <div className="w-full h-full flex items-center justify-center text-gray-700 dark:text-white bg-[#fce8d5]">
+        <AdjustmentsHorizontalIcon className="h-4 w-4" />
       </div>
     )}
   </label>
 </div>
+
 
 
         <div className="flex gap-3 items-center">
