@@ -1,3 +1,7 @@
+// DEPRECATED: This route is no longer used.
+// Replaced by App Router: src/app/api/auth/login/route.ts
+
+
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
